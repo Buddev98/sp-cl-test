@@ -1,22 +1,68 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  
+  /* Light theme variables */
+  --bg-color-light: #f5f5f7;
+  --text-color-light: #1d1d1f;
+  --accent-color-light: #0071e3;
+  --secondary-color-light: #86868b;
+  --clock-bg-light: #ffffff;
+  --clock-border-light: #0071e3;
+  --digital-color-light: #0071e3;
+  --marker-color-light: #86868b;
+  --major-marker-light: #1d1d1f;
+  
+  /* Dark theme variables */
+  --bg-color-dark: #1d1d1f;
+  --text-color-dark: #f5f5f7;
+  --accent-color-dark: #2997ff;
+  --secondary-color-dark: #86868b;
+  --clock-bg-dark: #000000;
+  --clock-border-dark: #2997ff;
+  --digital-color-dark: #2997ff;
+  --marker-color-dark: #86868b;
+  --major-marker-dark: #f5f5f7;
+  
+  /* Default to light theme */
+  --bg-color: var(--bg-color-light);
+  --text-color: var(--text-color-light);
+  --accent-color: var(--accent-color-light);
+  --secondary-color: var(--secondary-color-light);
+  --clock-bg: var(--clock-bg-light);
+  --clock-border: var(--clock-border-light);
+  --digital-color: var(--digital-color-light);
+  --marker-color: var(--marker-color-light);
+  --major-marker: var(--major-marker-light);
+  
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.dark-theme {
+  --bg-color: var(--bg-color-dark);
+  --text-color: var(--text-color-dark);
+  --accent-color: var(--accent-color-dark);
+  --secondary-color: var(--secondary-color-dark);
+  --clock-bg: var(--clock-bg-dark);
+  --clock-border: var(--clock-border-dark);
+  --digital-color: var(--digital-color-dark);
+  --marker-color: var(--marker-color-dark);
+  --major-marker: var(--major-marker-dark);
+}
+
 body {
   margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #app {
@@ -24,13 +70,22 @@ body {
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  width: 100%;
 }
 
 h1 {
   font-size: 2.5em;
   line-height: 1.1;
   margin-bottom: 1.5rem;
-  color: #646cff;
+  color: var(--accent-color);
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .clock-container {
@@ -38,18 +93,24 @@ h1 {
   flex-direction: column;
   align-items: center;
   gap: 2rem;
+  padding: 2rem;
+  background-color: var(--clock-bg);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .clock {
   width: 300px;
   height: 300px;
   border-radius: 50%;
-  background: #1a1a1a;
-  border: 10px solid #646cff;
-  box-shadow: 0 0 20px rgba(100, 108, 255, 0.3),
-              inset 0 0 20px rgba(0, 0, 0, 0.5);
+  background: var(--clock-bg);
+  border: 10px solid var(--clock-border);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1),
+              inset 0 0 20px rgba(0, 0, 0, 0.05);
   position: relative;
   padding: 1rem;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .clock-face {
@@ -61,13 +122,11 @@ h1 {
 .hand {
   width: 50%;
   height: 6px;
-  background: white;
   position: absolute;
   top: 50%;
   transform-origin: 100%;
   transform: rotate(90deg);
-  transition: all 0.05s;
-  transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+  transition: transform 0.05s cubic-bezier(0.1, 2.7, 0.58, 1);
   border-radius: 4px;
 }
 
@@ -76,16 +135,19 @@ h1 {
   left: 15%;
   height: 8px;
   background: #ff9500;
+  z-index: 2;
 }
 
 .minute-hand {
   height: 6px;
   background: #39ff14;
+  z-index: 3;
 }
 
 .second-hand {
   height: 4px;
   background: #ff073a;
+  z-index: 4;
 }
 
 .center-point {
@@ -95,9 +157,10 @@ h1 {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: white;
+  background: var(--accent-color);
   transform: translate(-50%, -50%);
   z-index: 10;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .markers {
@@ -108,35 +171,64 @@ h1 {
 
 .marker {
   position: absolute;
-  width: 4px;
-  height: 12px;
-  background: #888;
+  width: 2px;
+  height: 10px;
+  background: var(--marker-color);
   left: 50%;
-  margin-left: -2px;
-  transform-origin: 2px 150px;
+  margin-left: -1px;
+  transform-origin: 1px 150px;
+  transition: background-color 0.3s ease;
 }
 
 /* Position the hour markers */
 .marker-1 { transform: rotate(30deg); }
 .marker-2 { transform: rotate(60deg); }
-.marker-3 { transform: rotate(90deg); height: 16px; width: 6px; background: #ccc; margin-left: -3px; }
+.marker-3 { 
+  transform: rotate(90deg); 
+  height: 16px; 
+  width: 4px; 
+  background: var(--major-marker); 
+  margin-left: -2px; 
+}
 .marker-4 { transform: rotate(120deg); }
 .marker-5 { transform: rotate(150deg); }
-.marker-6 { transform: rotate(180deg); height: 16px; width: 6px; background: #ccc; margin-left: -3px; }
+.marker-6 { 
+  transform: rotate(180deg); 
+  height: 16px; 
+  width: 4px; 
+  background: var(--major-marker); 
+  margin-left: -2px; 
+}
 .marker-7 { transform: rotate(210deg); }
 .marker-8 { transform: rotate(240deg); }
-.marker-9 { transform: rotate(270deg); height: 16px; width: 6px; background: #ccc; margin-left: -3px; }
+.marker-9 { 
+  transform: rotate(270deg); 
+  height: 16px; 
+  width: 4px; 
+  background: var(--major-marker); 
+  margin-left: -2px; 
+}
 .marker-10 { transform: rotate(300deg); }
 .marker-11 { transform: rotate(330deg); }
-.marker-12 { transform: rotate(0deg); height: 16px; width: 6px; background: #ccc; margin-left: -3px; }
+.marker-12 { 
+  transform: rotate(0deg); 
+  height: 16px; 
+  width: 4px; 
+  background: var(--major-marker); 
+  margin-left: -2px; 
+}
 
 .digital-clock {
   font-size: 3rem;
-  font-weight: bold;
-  font-family: 'Courier New', monospace;
-  color: #39ff14;
-  text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+  font-weight: 600;
+  font-family: 'Roboto Mono', monospace;
+  color: var(--digital-color);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   letter-spacing: 2px;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #ampm {
@@ -146,40 +238,220 @@ h1 {
 
 .date {
   font-size: 1.2rem;
-  color: #ccc;
+  color: var(--secondary-color);
+  transition: color 0.3s ease;
+  margin-bottom: 1rem;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  
-  h1 {
-    color: #535bf2;
-  }
-  
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.control-label {
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+}
+
+.theme-toggle {
+  background: var(--secondary-color);
+  border-radius: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px;
+  position: relative;
+  height: 26px;
+  width: 60px;
+  transform: scale(1.2);
+}
+
+.theme-toggle .theme-icon {
+  height: 20px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bg-color);
+}
+
+.theme-toggle .slider {
+  background-color: var(--bg-color);
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  height: 20px;
+  width: 20px;
+  transform: translateX(0);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.theme-toggle.dark .slider {
+  transform: translateX(34px);
+}
+
+select.timezone-select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--secondary-color);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  min-width: 200px;
+}
+
+select.timezone-select:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.2);
+}
+
+.clock-format-toggle {
+  display: flex;
+  background-color: var(--bg-color);
+  border: 1px solid var(--secondary-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.format-option {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.format-option.active {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.world-clocks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.world-clock {
+  background-color: var(--clock-bg);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.world-clock:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.world-clock-city {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  margin-bottom: 0.5rem;
+}
+
+.world-clock-time {
+  font-size: 1.8rem;
+  font-family: 'Roboto Mono', monospace;
+  color: var(--text-color);
+}
+
+.world-clock-date {
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
   .clock {
-    background: #f9f9f9;
-    border-color: #535bf2;
-    box-shadow: 0 0 20px rgba(83, 91, 242, 0.3),
-                inset 0 0 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  .digital-clock {
-    color: #535bf2;
-    text-shadow: 0 0 10px rgba(83, 91, 242, 0.3);
-  }
-  
-  .date {
-    color: #666;
+    width: 250px;
+    height: 250px;
   }
   
   .marker {
-    background: #666;
+    transform-origin: 1px 125px;
   }
   
-  .marker-3, .marker-6, .marker-9, .marker-12 {
-    background: #444;
+  .digital-clock {
+    font-size: 2.5rem;
+  }
+  
+  .world-clocks {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .clock {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .marker {
+    transform-origin: 1px 100px;
+  }
+  
+  .digital-clock {
+    font-size: 2rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.slide-in {
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
